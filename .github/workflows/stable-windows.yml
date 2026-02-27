@@ -19,8 +19,7 @@ jobs:
         shell: bash
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -40,6 +39,10 @@ jobs:
           SHOULD_BUILD_REH: 'no'
           SHOULD_BUILD_REH_WEB: 'no'
         run: ./build.sh
+
+      - name: Create vscode archive
+        run: |
+          tar -czf vscode.tar.gz vscode
 
       - name: Package Windows x64
         env:
