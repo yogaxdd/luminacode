@@ -32,7 +32,13 @@ jobs:
       - name: Clone VSCode source
         run: ./get_repo.sh
 
-      - name: Build & Package Windows x64
+      - name: Build Source
+        env:
+          SHOULD_BUILD_REH: 'no'
+          SHOULD_BUILD_REH_WEB: 'no'
+        run: ./build.sh
+
+      - name: Package Windows x64
         env:
           npm_config_arch: x64
           npm_config_target_arch: x64
