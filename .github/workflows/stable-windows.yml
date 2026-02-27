@@ -12,7 +12,8 @@ env:
   VSCODE_QUALITY: stable
 
 jobs:
-  build:
+
+  compile:
     runs-on: windows-2022
     defaults:
       run:
@@ -21,13 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
@@ -40,9 +39,35 @@ jobs:
           SHOULD_BUILD_REH_WEB: 'no'
         run: ./build.sh
 
-      - name: Create vscode archive
-        run: |
-          tar -czf vscode.tar.gz vscode
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: .build/
+
+  package:
+    needs: compile
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: .build/
 
       - name: Package Windows x64
         env:
@@ -55,3 +80,4 @@ jobs:
         with:
           name: LuminaCode-Windows
           path: assets/
+        
